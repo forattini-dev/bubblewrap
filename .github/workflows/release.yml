@@ -44,17 +44,14 @@ jobs:
           file ./build/bwrap
           ls -la ./build/bwrap
 
-      - name: Package binary
-        run: |
-          mkdir -p dist
-          cp build/bwrap dist/bwrap
-          cd dist && tar czf ../bwrap-${{ matrix.target }}.tar.gz bwrap
+      - name: Rename binary with platform suffix
+        run: cp build/bwrap bwrap-${{ matrix.target }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bwrap-${{ matrix.target }}
-          path: bwrap-${{ matrix.target }}.tar.gz
+          path: bwrap-${{ matrix.target }}
 
   release:
     needs: build
@@ -87,12 +84,14 @@ jobs:
             ## Download
             ```bash
             # Linux x86_64
-            curl -fsSL https://github.com/forattini-dev/bubblewrap/releases/latest/download/bwrap-linux-x86_64.tar.gz | tar xz
+            curl -fsSL -o bwrap https://github.com/forattini-dev/bubblewrap/releases/latest/download/bwrap-linux-x86_64
+            chmod +x bwrap
 
             # Linux aarch64
-            curl -fsSL https://github.com/forattini-dev/bubblewrap/releases/latest/download/bwrap-linux-aarch64.tar.gz | tar xz
+            curl -fsSL -o bwrap https://github.com/forattini-dev/bubblewrap/releases/latest/download/bwrap-linux-aarch64
+            chmod +x bwrap
             ```
           files: |
-            artifacts/bwrap-linux-x86_64/bwrap-linux-x86_64.tar.gz
-            artifacts/bwrap-linux-aarch64/bwrap-linux-aarch64.tar.gz
+            artifacts/bwrap-linux-x86_64/bwrap-linux-x86_64
+            artifacts/bwrap-linux-aarch64/bwrap-linux-aarch64
           generate_release_notes: false
